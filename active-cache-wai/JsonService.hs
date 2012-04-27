@@ -15,7 +15,7 @@ import Control.Exception
 import Control.Monad
 import Control.Monad.IO.Class (liftIO)
 
--- | write TMVar even if it's already full, atomic only if there are no other writer.
+-- | write TMVar even if it's already full.
 forcePutTMVar :: TMVar a -> a -> STM ()
 forcePutTMVar var a = do
     tryTakeTMVar var
