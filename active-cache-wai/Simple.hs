@@ -32,12 +32,16 @@ app state req = case pathInfo req of
 
 -- update the cache periodically.
 cacher :: String -> TMVar SimpleState -> Int -> IO ()
-cacher url state interval = forever $ do
-    ersp <- try (HTTP.simpleHttp url)
-    case ersp of
-        Right rsp -> void $ atomically $ forcePutTMVar state rsp
-        Left err -> print (err::SomeException)
-    threadDelay interval
+cacher url state interval = loop
+  where
+    loop = do
+        ersp <- try (HTTP.simpleHttp url)
+        case ersp of
+            Right rsp -> do
+                atomically $ forcePutTMVar state rsp
+                threadDelay interval
+                loop
+            Left err -> print (err::SomeException) >> loop
 
 main :: IO ()
 main = do
