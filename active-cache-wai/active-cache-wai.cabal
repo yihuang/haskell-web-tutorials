@@ -18,6 +18,7 @@ executable active-cache-wai-Simple
   main-is:             Simple.hs
   build-depends:       base ==4.5.*, wai ==1.1.*, warp ==1.1.*, http-conduit ==1.2.*, http-types ==0.6.*, ghc-prim ==0.2.*, aeson ==0.6.*, vector ==0.9.*, blaze-builder ==0.3.*, transformers ==0.2.*, bytestring ==0.9.*
 
-executable active-cache-wai-StructuredState
-  main-is:             StructuredState.hs
+executable active-cache-wai-JsonService
+  main-is:             JsonService.hs
   build-depends:       base ==4.5.*, wai ==1.1.*, warp ==1.1.*, http-conduit ==1.2.*, http-types ==0.6.*, ghc-prim ==0.2.*, aeson ==0.6.*, vector ==0.9.*, blaze-builder ==0.3.*, transformers ==0.2.*, bytestring ==0.9.*
+
