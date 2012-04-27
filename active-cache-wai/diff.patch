@@ -8,7 +8,7 @@
 > import qualified Data.Vector as V
 7d11
 < import qualified Data.ByteString.Lazy as L
-13c17,23
+19c23,29
 < type SimpleState = L.ByteString
 ---
 > newtype SimpleState = SimpleState Int
@@ -18,13 +18,13 @@
 > instance FromJSON SimpleState where
 >     parseJSON (Array vec) = return $ SimpleState $ V.length vec
 >     parseJSON o = typeMismatch "SimpleState" o
-20c30
+26c36
 <         return $ response d
 ---
 >         return $ response (encode d)
-31c41,43
-<         Right rsp -> void $ swapMVar state rsp
+37c47,49
+<         Right rsp -> void $ forcePutMVar state rsp
 ---
 >         Right rsp -> maybe (putStrLn "decode json failed.")
->                            (void . swapMVar state)
+>                            (void . forcePutMVar state)
 >                            (decode rsp)

@@ -10,13 +10,19 @@ import Control.Exception
 import Control.Monad
 import Control.Monad.IO.Class (liftIO)
 
+-- | write MVar even if it's already full, atomic only if there are no other writer.
+forcePutMVar :: MVar a -> a -> IO ()
+forcePutMVar var a = do
+    tryTakeMVar var
+    putMVar var a
+
 type SimpleState = L.ByteString
 
 -- handle http requests
 app :: MVar SimpleState -> Application
 app state req = case pathInfo req of
     [] -> do
-        d <- liftIO (takeMVar state)
+        d <- liftIO (readMVar state)
         return $ response d
     _ -> return response404
   where
@@ -28,14 +34,14 @@ cacher :: String -> MVar SimpleState -> Int -> IO ()
 cacher url state interval = forever $ do
     ersp <- try (HTTP.simpleHttp url)
     case ersp of
-        Right rsp -> void $ swapMVar state rsp
+        Right rsp -> void $ forcePutMVar state rsp
         Left err -> print (err::SomeException)
     threadDelay interval
 
 main :: IO ()
 main = do
     let port = 3000
-    state <- newEmptyMVar :: IO (MVar SimpleState)
+    state <- newEmptyMVar
     _ <- forkIO (cacher "http://10.10.10.3:9002/" state 1000)
     putStrLn $ "http://localhost:"++show port
     run port (app state)
