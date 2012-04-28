@@ -45,6 +45,6 @@ main :: IO ()
 main = do
     let port = 3000
     state <- newEmptyTMVarIO
-    _ <- forkIO (cacher "http://10.10.10.3:9002/" state 1000)
+    _ <- forkIO (cacher "http://10.10.10.3:9002/" state 1000000)
     putStrLn $ "http://localhost:"++show port
     run port (app state)
