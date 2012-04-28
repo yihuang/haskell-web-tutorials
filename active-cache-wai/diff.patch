@@ -22,16 +22,9 @@
 <         return $ response d
 ---
 >         return $ response (encode d)
-40,43c50,53
-<             Right rsp -> do
-<                 atomically $ forcePutTMVar state rsp
-<                 threadDelay interval
-<                 loop
+37c47
+<         try (HTTP.simpleHttp url) >>= either onError onSuccess
 ---
->             Right rsp ->
->                 maybe (putStrLn "decode json failed." >> loop)
->                       ((>>next) . atomically . forcePutTMVar state)
->                       (decode rsp)
-44a55,56
-> 
->     next = threadDelay interval >> loop
+>         try (HTTP.simpleHttp url) >>= either onError (maybe onDecodeFailed onSuccess . decode)
+38a49
+>     onDecodeFailed = putStrLn "decode json failed."
